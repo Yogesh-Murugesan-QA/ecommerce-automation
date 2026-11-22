@@ -72,12 +72,12 @@ The workflow in `.github/workflows/ui-tests.yml` runs the full suite in headless
 | `NegativeTests.loginWithInvalidCredentialsFails` | Login with invalid credentials (4) |
 | `NegativeTests.searchForNonExistingProductReturnsNothing` | Search for a non-existing product (6) |
 | `NegativeTests.checkoutWithoutLoginIsBlocked` | Checkout without required information (account/login) (14) |
-| `NegativeTests.loginWithWrongPasswordFails` | Extra: login with a registered email and wrong password |
-| `NegativeTests.loginWithEmptyEmailIsBlocked` | Extra: login with an empty email (required-field validation) |
-| `NegativeTests.signupWithInvalidEmailFormatIsBlocked` | Extra: sign-up with a badly formatted email |
+| `NegativeTests.loginWithWrongPasswordFails` | Login with a registered email and wrong password (4) |
+| `NegativeTests.loginWithEmptyEmailIsBlocked` | Login with an empty email, blocked by required-field validation (4) |
+| `NegativeTests.signupWithInvalidEmailFormatIsBlocked` | Sign-up with invalid data: badly formatted email (2) |
 | `CartAndCheckoutTests.modifyCartQuantity` | Modify cart quantity (9) |
 | `CartAndCheckoutTests.removeProductFromCart` | Remove product from cart, also after refresh (10) |
-| `CartAndCheckoutTests.removingLastProductEmptiesCart` | Extra: removing the only product leaves an empty cart |
+| `CartAndCheckoutTests.removingLastProductEmptiesCart` | Remove product from cart: removing the only product leaves an empty cart (10) |
 | `CartAndCheckoutTests.cartPersistsAfterLogin` | Cart persistence: guest cart kept after login (11) |
 | `CartAndCheckoutTests.backNavigationDuringCheckout` | Back/Forward navigation during checkout (15) |
 
@@ -108,7 +108,7 @@ No credentials, VPN or private environment are needed. The site is public, and e
 
 ## Notes
 
-- The demo site's cart has no quantity editor, so quantity is changed on the product page before adding to cart (the same way the site itself supports it).
+- The demo site's cart has no quantity editor, so the cart quantity is modified the way the site supports it: adding the same product again from its product page. `modifyCartQuantity` adds 1, then 2 more, and checks the cart shows one row with quantity 3 and the matching total.
 
 - The demo site shows Google ads. The framework blocks common ad hosts in Chrome/Edge and reloads the page if a full-page ad appears.
 - Test accounts are deleted at the end of each test that creates one.
