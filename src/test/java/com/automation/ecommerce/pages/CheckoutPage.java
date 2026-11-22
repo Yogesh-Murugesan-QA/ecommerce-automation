@@ -2,7 +2,7 @@ package com.automation.ecommerce.pages;
 
 import org.openqa.selenium.By;
 
-/** Checkout review page. Tests stop here: no payment details are entered and no order is placed. */
+/** Checkout review page. The happy flow stops here; only the payment validation test goes on to the payment page, and no order is ever placed. */
 public class CheckoutPage extends BasePage {
 
     private final By deliveryAddress = By.id("address_delivery");

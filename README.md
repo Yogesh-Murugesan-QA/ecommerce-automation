@@ -24,7 +24,7 @@ src/test/java/com/automation/ecommerce
 ├── pages/                      Page Object Model
 │   ├── BasePage.java           reusable actions (click, type, waits) + site header
 │   ├── HomePage, LoginPage, SignupPage, ProductsPage,
-│   └── ProductDetailsPage, CartPage, CheckoutPage
+│   └── ProductDetailsPage, CartPage, CheckoutPage, PaymentPage
 ├── reports/                    ExtentManager + TestListener (HTML report)
 ├── utils/                      TestDataReader, ScreenshotUtil, User
 └── tests/
@@ -99,7 +99,7 @@ The happy flow stops at the checkout review page. The furthest any test goes is 
 | Meaningful assertions | Business checks on user, prices, quantity, totals and address, not just clicks |
 | Logging | Log4j2 to console and `target/logs/automation.log` |
 | Screenshots | At key steps and on every failure; saved to disk and embedded in the report |
-| Error handling | Explicit waits with clear error messages; JavaScript click fallback when an ad overlay blocks a click; full-page ad detection; browser always closed in `finally` |
+| Error handling | Explicit waits with clear error messages; JavaScript click fallback when an ad overlay blocks a click; full-page ad detection; retries up to 3 times when the demo site shows its "under heavy load (queue full)" page; browser always closed in `finally` |
 | Reporting | Extent HTML report through a TestNG listener |
 | Parallel execution | `parallel="methods"` in `testng.xml` with a ThreadLocal driver per thread |
 
