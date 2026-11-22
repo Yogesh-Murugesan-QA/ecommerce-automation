@@ -58,6 +58,20 @@ public class LoginPage extends BasePage {
         return getText(loginError);
     }
 
+    public boolean isLoginErrorShown() {
+        return isDisplayed(loginError);
+    }
+
+    /** Browser's built-in validation message for the login email field (empty when the value is valid). */
+    public String getLoginEmailValidationMessage() {
+        return waitForPresent(loginEmail).getDomProperty("validationMessage");
+    }
+
+    /** Browser's built-in validation message for the sign-up email field (empty when the value is valid). */
+    public String getSignupEmailValidationMessage() {
+        return waitForPresent(signupEmail).getDomProperty("validationMessage");
+    }
+
     /** Waits for the login form, so it is safe to call right after a click such as Logout. */
     public boolean isLoginFormDisplayed() {
         try {

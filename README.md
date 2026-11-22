@@ -1,5 +1,7 @@
 # E-commerce Web Automation – SDET Assessment (Task 3)
 
+[![UI Tests](https://github.com/Yogesh-Murugesan-QA/ecommerce-automation/actions/workflows/ui-tests.yml/badge.svg?branch=main)](https://github.com/Yogesh-Murugesan-QA/ecommerce-automation/actions/workflows/ui-tests.yml)
+
 Selenium + Java + TestNG automation for an e-commerce site, using the Page Object Model.
 
 ## Application under test
@@ -70,8 +72,12 @@ The workflow in `.github/workflows/ui-tests.yml` runs the full suite in headless
 | `NegativeTests.loginWithInvalidCredentialsFails` | Login with invalid credentials (4) |
 | `NegativeTests.searchForNonExistingProductReturnsNothing` | Search for a non-existing product (6) |
 | `NegativeTests.checkoutWithoutLoginIsBlocked` | Checkout without required information (account/login) (14) |
+| `NegativeTests.loginWithWrongPasswordFails` | Extra: login with a registered email and wrong password |
+| `NegativeTests.loginWithEmptyEmailIsBlocked` | Extra: login with an empty email (required-field validation) |
+| `NegativeTests.signupWithInvalidEmailFormatIsBlocked` | Extra: sign-up with a badly formatted email |
 | `CartAndCheckoutTests.modifyCartQuantity` | Modify cart quantity (9) |
 | `CartAndCheckoutTests.removeProductFromCart` | Remove product from cart, also after refresh (10) |
+| `CartAndCheckoutTests.removingLastProductEmptiesCart` | Extra: removing the only product leaves an empty cart |
 | `CartAndCheckoutTests.cartPersistsAfterLogin` | Cart persistence: guest cart kept after login (11) |
 | `CartAndCheckoutTests.backNavigationDuringCheckout` | Back/Forward navigation during checkout (15) |
 

@@ -12,17 +12,22 @@ import org.testng.annotations.Test;
 
 public class CartAndCheckoutTests extends BaseTest {
 
-    @Test(description = "Changing the product quantity updates the cart quantity and line total")
+    @Test(description = "Adding more of a product already in the cart updates its cart quantity and line total")
     public void modifyCartQuantity() {
         String productName = TestDataReader.get("product/name");
         int newQuantity = TestDataReader.getInt("product/updatedQuantity");
 
-        step("Open '" + productName + "' and change quantity from 1 to " + newQuantity);
+        step("Add 1 x '" + productName + "' to cart");
         ProductDetailsPage productPage = new HomePage().open().goToProducts().openProduct(productName);
         int price = productPage.getPrice();
-        CartPage cartPage = productPage.setQuantity(newQuantity).addToCart().viewCart();
+        CartPage cartPage = productPage.addToCart().viewCart();
+        Assert.assertEquals(cartPage.getQuantity(productName), 1, "Cart should start with quantity 1");
+
+        step("Add " + (newQuantity - 1) + " more to change the cart quantity from 1 to " + newQuantity);
+        cartPage = cartPage.goToProducts().openProduct(productName).setQuantity(newQuantity - 1).addToCart().viewCart();
 
         step("Validate quantity and total in cart");
+        Assert.assertEquals(cartPage.getNumberOfItems(), 1, "Product should stay a single cart row, not be added twice");
         Assert.assertEquals(cartPage.getQuantity(productName), newQuantity, "Cart should show the updated quantity");
         Assert.assertEquals(cartPage.getTotal(productName), price * newQuantity, "Cart total should be price x updated quantity");
         attachScreenshot("Quantity updated in cart");
@@ -51,6 +56,25 @@ public class CartAndCheckoutTests extends BaseTest {
         Assert.assertFalse(refreshedCart.hasProduct(firstProduct), "Removed product should not come back after refresh");
         Assert.assertEquals(refreshedCart.getNumberOfItems(), 1, "Cart should still contain one product after refresh");
         attachScreenshot("Product removed from cart");
+    }
+
+    @Test(description = "Removing the only product leaves an empty cart, also after page refresh")
+    public void removingLastProductEmptiesCart() {
+        String productName = TestDataReader.get("product/name");
+
+        step("Add '" + productName + "' to cart");
+        CartPage cartPage = new HomePage().open().goToProducts().openProduct(productName).addToCart().viewCart();
+        Assert.assertEquals(cartPage.getNumberOfItems(), 1, "Cart should contain one product");
+
+        step("Remove it, refresh the cart and check it is empty");
+        cartPage.removeProduct(productName);
+        cartPage.refreshPage();
+        CartPage refreshedCart = new CartPage();
+        Assert.assertEquals(refreshedCart.getNumberOfItems(), 0, "Cart should contain no products");
+        String message = refreshedCart.getEmptyCartMessage();
+        Assert.assertTrue(message.contains(TestDataReader.get("messages/emptyCart")),
+                "Empty cart message should be shown, but was: '" + message + "'");
+        attachScreenshot("Empty cart");
     }
 
     @Test(description = "Products added as a guest stay in the cart after the user logs in")

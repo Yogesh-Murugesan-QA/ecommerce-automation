@@ -28,6 +28,10 @@ public class CartPage extends BasePage {
         return (int) driver.findElements(cartRows).stream().filter(WebElement::isDisplayed).count();
     }
 
+    public String getEmptyCartMessage() {
+        return getText(emptyCartMessage);
+    }
+
     public boolean hasProduct(String name) {
         return isDisplayed(productRow(name));
     }

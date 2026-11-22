@@ -30,10 +30,12 @@
     "password": "Wrong@123"
   },
   "invalidSearchTerm": "xyzNoSuchProduct123",
+  "invalidEmailFormat": "invalid.email.format",
   "messages": {
     "duplicateEmail": "Email Address already exist!",
     "invalidLogin": "Your email or password is incorrect!",
     "addedToCart": "Your product has been added to cart.",
-    "checkoutLoginRequired": "Register / Login account to proceed on checkout."
+    "checkoutLoginRequired": "Register / Login account to proceed on checkout.",
+    "emptyCart": "Cart is empty!"
   }
 }

@@ -175,6 +175,11 @@ public abstract class BasePage {
 
     public boolean deleteAccount() {
         click(deleteAccountLink);
-        return waitForVisible(accountDeleted).isDisplayed();
+        try {
+            return waitForVisible(accountDeleted).isDisplayed();
+        } catch (TimeoutException e) {
+            log.warn("'Account Deleted!' message not shown: {}", e.getMessage());
+            return false;
+        }
     }
 }
