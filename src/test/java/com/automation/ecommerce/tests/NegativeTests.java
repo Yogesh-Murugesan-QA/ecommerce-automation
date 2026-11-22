@@ -4,11 +4,14 @@ import com.automation.ecommerce.base.BaseTest;
 import com.automation.ecommerce.pages.CartPage;
 import com.automation.ecommerce.pages.HomePage;
 import com.automation.ecommerce.pages.LoginPage;
+import com.automation.ecommerce.pages.PaymentPage;
 import com.automation.ecommerce.pages.ProductsPage;
 import com.automation.ecommerce.utils.TestDataReader;
 import com.automation.ecommerce.utils.User;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class NegativeTests extends BaseTest {
 
@@ -114,5 +117,33 @@ public class NegativeTests extends BaseTest {
         Assert.assertTrue(cartPage.isRegisterLoginLinkShown(), "Register / Login link should be shown");
         Assert.assertTrue(cartPage.getCurrentUrl().contains("/view_cart"), "Guest should not reach the checkout page");
         attachScreenshot("Checkout blocked for guest");
+    }
+
+    @Test(description = "Payment with the required card details left empty is blocked and no order is placed")
+    public void paymentWithoutCardDetailsIsBlocked() {
+        String productName = TestDataReader.get("product/name");
+        User user = signUpNewUser();
+
+        step("Add '" + productName + "' to cart and go to the payment page as " + user.email());
+        PaymentPage paymentPage = new HomePage().goToProducts().openProduct(productName).addToCart().viewCart()
+                .proceedToCheckout().proceedToPayment();
+
+        step("Check every card field is required before submitting (never submit if any field is not)");
+        Map<String, String> validation = paymentPage.getCardFieldValidationMessages();
+        validation.forEach((field, message) -> Assert.assertTrue(message != null && !message.isEmpty(),
+                "Card field '" + field + "' should be required so the browser blocks an empty submit"));
+
+        step("Submit the payment form with no card details");
+        paymentPage.submitEmptyForm();
+        Assert.assertFalse(paymentPage.isOrderPlaced(), "No order should be placed");
+        Assert.assertTrue(paymentPage.getCurrentUrl().contains("/payment"), "User should stay on the payment page");
+        attachScreenshot("Payment blocked without card details");
+
+        step("Check the product is still in the cart (no order was placed)");
+        CartPage cartPage = paymentPage.goToCart();
+        Assert.assertTrue(cartPage.hasProduct(productName), "Product should still be in the cart");
+
+        step("Clean up: delete the test account");
+        Assert.assertTrue(cartPage.deleteAccount(), "Test account should be deleted");
     }
 }

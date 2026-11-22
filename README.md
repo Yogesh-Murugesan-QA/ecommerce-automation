@@ -72,6 +72,7 @@ The workflow in `.github/workflows/ui-tests.yml` runs the full suite in headless
 | `NegativeTests.loginWithInvalidCredentialsFails` | Login with invalid credentials (4) |
 | `NegativeTests.searchForNonExistingProductReturnsNothing` | Search for a non-existing product (6) |
 | `NegativeTests.checkoutWithoutLoginIsBlocked` | Checkout without required information (account/login) (14) |
+| `NegativeTests.paymentWithoutCardDetailsIsBlocked` | Checkout without required information: empty payment form is blocked and no order is placed (14) |
 | `NegativeTests.loginWithWrongPasswordFails` | Login with a registered email and wrong password (4) |
 | `NegativeTests.loginWithEmptyEmailIsBlocked` | Login with an empty email, blocked by required-field validation (4) |
 | `NegativeTests.signupWithInvalidEmailFormatIsBlocked` | Sign-up with invalid data: badly formatted email (2) |
@@ -85,7 +86,7 @@ All 15 scenarios from the assessment are automated.
 
 **Business assertions** include: the logged-in user's name after sign-up and login; the product appearing in search results; the cart price matching the product page price; quantity and total (price × quantity); delivery address details at checkout; and the order total matching the cart.
 
-The tests stop at the checkout review page. No payment details are entered and no order is placed.
+The happy flow stops at the checkout review page. The furthest any test goes is the payment page, where `paymentWithoutCardDetailsIsBlocked` submits the form empty, only after checking every card field is required so the browser blocks it. No payment details are ever entered and no order is placed.
 
 ## Framework features
 

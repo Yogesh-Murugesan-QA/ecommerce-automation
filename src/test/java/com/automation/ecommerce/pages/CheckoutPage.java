@@ -35,4 +35,10 @@ public class CheckoutPage extends BasePage {
     public boolean isPlaceOrderShown() {
         return isDisplayed(placeOrderButton);
     }
+
+    /** "Place Order" only opens the payment form; nothing is ordered until that form is submitted. */
+    public PaymentPage proceedToPayment() {
+        click(placeOrderButton);
+        return new PaymentPage();
+    }
 }
