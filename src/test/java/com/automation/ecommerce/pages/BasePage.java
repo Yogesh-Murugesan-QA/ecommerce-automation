@@ -10,6 +10,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -20,6 +21,8 @@ import java.util.List;
 
 /** Reusable actions and the site header shared by every page. */
 public abstract class BasePage {
+
+    private static final int OVERLOAD_RETRIES = 3;
 
     protected final Logger log = LogManager.getLogger(getClass());
     protected final WebDriver driver;
@@ -45,13 +48,14 @@ public abstract class BasePage {
         log.info("Opening {}", url);
         driver.get(url);
         closeAdIfShown();
+        retryIfSiteOverloaded();
     }
 
     protected WebElement waitForVisible(By locator) {
         try {
             return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         } catch (TimeoutException e) {
-            throw new TimeoutException("Element not visible: " + locator + " on page " + driver.getCurrentUrl(), e);
+            throw new TimeoutException("Element not visible: " + locator + " on page " + describePage(), e);
         }
     }
 
@@ -61,7 +65,7 @@ public abstract class BasePage {
         try {
             element = wait.until(ExpectedConditions.elementToBeClickable(locator));
         } catch (TimeoutException e) {
-            throw new TimeoutException("Element not clickable: " + locator + " on page " + driver.getCurrentUrl(), e);
+            throw new TimeoutException("Element not clickable: " + locator + " on page " + describePage(), e);
         }
         try {
             element.click();
@@ -71,6 +75,7 @@ public abstract class BasePage {
                     "arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", element);
         }
         closeAdIfShown();
+        retryIfSiteOverloaded();
     }
 
     protected void type(By locator, String text) {
@@ -98,7 +103,7 @@ public abstract class BasePage {
         try {
             return wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         } catch (TimeoutException e) {
-            throw new TimeoutException("Element not found: " + locator + " on page " + driver.getCurrentUrl(), e);
+            throw new TimeoutException("Element not found: " + locator + " on page " + describePage(), e);
         }
     }
 
@@ -131,6 +136,46 @@ public abstract class BasePage {
             log.warn("Full-page ad shown, reloading page without it");
             driver.get(url.substring(0, url.indexOf('#')));
         }
+    }
+
+    /**
+     * The public demo site sometimes answers with "This website is under heavy load (queue full)" instead of
+     * the page. Wait and load the same URL again, up to 3 times. driver.get() is a plain GET, so a submitted
+     * form is never sent twice; if a form's result is lost, the test's own checks fail on the next step.
+     */
+    private void retryIfSiteOverloaded() {
+        for (int attempt = 1; isSiteOverloaded(); attempt++) {
+            if (attempt > OVERLOAD_RETRIES) {
+                throw new IllegalStateException("Site still overloaded after " + OVERLOAD_RETRIES + " retries on "
+                        + driver.getCurrentUrl() + " ('under heavy load (queue full)'): a site outage, not a product defect");
+            }
+            log.warn("Site overloaded ('queue full'), retry {} of {} in {} s", attempt, OVERLOAD_RETRIES, attempt * 5);
+            try {
+                Thread.sleep(attempt * 5000L);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Interrupted while waiting for the overloaded site", e);
+            }
+            driver.get(driver.getCurrentUrl());
+        }
+    }
+
+    private boolean isSiteOverloaded() {
+        try {
+            Object overloaded = ((JavascriptExecutor) driver).executeScript(
+                    "var t = document.body ? document.body.textContent : '';"
+                            + "return t.length < 2000 && t.indexOf('under heavy load') >= 0;");
+            return Boolean.TRUE.equals(overloaded);
+        } catch (WebDriverException e) {
+            // e.g. the page is mid-navigation; treat as not overloaded and let the normal waits report problems
+            return false;
+        }
+    }
+
+    /** Current URL for error messages, noting when the site showed its overload page instead. */
+    private String describePage() {
+        String url = driver.getCurrentUrl();
+        return isSiteOverloaded() ? url + " (site showed 'under heavy load (queue full)', not the expected page)" : url;
     }
 
     public String getCurrentUrl() {
