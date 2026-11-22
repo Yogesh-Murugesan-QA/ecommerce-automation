@@ -1,0 +1,39 @@
+{
+  "user": {
+    "name": "Test User",
+    "password": "Test@12345",
+    "firstName": "Test",
+    "lastName": "User",
+    "company": "QA Labs",
+    "address": "12 MG Road",
+    "country": "India",
+    "state": "Karnataka",
+    "city": "Bengaluru",
+    "zipcode": "560001",
+    "mobile": "9876543210",
+    "birthDay": "15",
+    "birthMonth": "6",
+    "birthYear": "1995"
+  },
+  "product": {
+    "searchTerm": "Blue Top",
+    "name": "Blue Top",
+    "quantity": 2,
+    "updatedQuantity": 3
+  },
+  "secondProduct": {
+    "name": "Men Tshirt"
+  },
+  "duplicateSignupName": "Another User",
+  "invalidLogin": {
+    "email": "not.registered.user@example.com",
+    "password": "Wrong@123"
+  },
+  "invalidSearchTerm": "xyzNoSuchProduct123",
+  "messages": {
+    "duplicateEmail": "Email Address already exist!",
+    "invalidLogin": "Your email or password is incorrect!",
+    "addedToCart": "Your product has been added to cart.",
+    "checkoutLoginRequired": "Register / Login account to proceed on checkout."
+  }
+}
