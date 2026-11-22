@@ -17,7 +17,7 @@ import java.util.List;
 
 public class EndToEndFlowTest extends BaseTest {
 
-    @Test(description = "Happy flow: Sign up > Login > Search > Select product > Add to cart > Cart validation > Checkout (stops before payment)")
+    @Test(groups = {"smoke", "regression"}, description = "Happy flow: Sign up > Login > Search > Select product > Add to cart > Cart validation > Checkout (stops before payment)")
     public void completePurchaseFlow() {
         String searchTerm = TestDataReader.get("product/searchTerm");
         String productName = TestDataReader.get("product/name");

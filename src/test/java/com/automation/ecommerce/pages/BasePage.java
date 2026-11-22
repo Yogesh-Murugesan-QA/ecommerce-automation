@@ -161,20 +161,33 @@ public abstract class BasePage {
     }
 
     private boolean isSiteOverloaded() {
+        return isShortErrorPageWith("under heavy load");
+    }
+
+    /** Chrome's own error page when the site refuses the request ("Access to ... was denied", HTTP ERROR 403). */
+    private boolean isAccessDenied() {
+        return isShortErrorPageWith("HTTP ERROR 403");
+    }
+
+    /** True when the page is a short error page (not a real site page) containing the given text. */
+    private boolean isShortErrorPageWith(String text) {
         try {
-            Object overloaded = ((JavascriptExecutor) driver).executeScript(
+            Object found = ((JavascriptExecutor) driver).executeScript(
                     "var t = document.body ? document.body.textContent : '';"
-                            + "return t.length < 2000 && t.indexOf('under heavy load') >= 0;");
-            return Boolean.TRUE.equals(overloaded);
+                            + "return t.length < 2000 && t.indexOf(arguments[0]) >= 0;", text);
+            return Boolean.TRUE.equals(found);
         } catch (WebDriverException e) {
-            // e.g. the page is mid-navigation; treat as not overloaded and let the normal waits report problems
+            // e.g. the page is mid-navigation; treat as not an error page and let the normal waits report problems
             return false;
         }
     }
 
-    /** Current URL for error messages, noting when the site showed its overload page instead. */
+    /** Current URL for error messages, noting when the site showed an overload or access-denied page instead. */
     private String describePage() {
         String url = driver.getCurrentUrl();
+        if (isAccessDenied()) {
+            return url + " (site returned HTTP 403 'Access denied': the site refused this machine, not a product defect)";
+        }
         return isSiteOverloaded() ? url + " (site showed 'under heavy load (queue full)', not the expected page)" : url;
     }
 

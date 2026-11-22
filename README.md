@@ -47,7 +47,15 @@ mvn clean test                                  # default: qa env, Chrome
 mvn clean test -Dheadless=true                  # headless
 mvn clean test -Dbrowser=edge                   # chrome | edge | firefox
 mvn clean test -Denv=staging                    # another environment's config
+mvn clean test -Dgroups=smoke                   # only the smoke tests (default: regression, all tests)
 ```
+
+### Test groups
+
+| Group | Tests | Purpose |
+| --- | --- | --- |
+| `smoke` | `completePurchaseFlow`, `loginWithInvalidCredentialsFails`, `checkoutWithoutLoginIsBlocked` | Quick check that the main journey and key protections work |
+| `regression` | All 14 tests | Full coverage (default; CI runs this) |
 
 You can also run `testng.xml` directly from IntelliJ or Eclipse.
 
@@ -99,7 +107,7 @@ The happy flow stops at the checkout review page. The furthest any test goes is 
 | Meaningful assertions | Business checks on user, prices, quantity, totals and address, not just clicks |
 | Logging | Log4j2 to console and `target/logs/automation.log` |
 | Screenshots | At key steps and on every failure; saved to disk and embedded in the report |
-| Error handling | Explicit waits with clear error messages; JavaScript click fallback when an ad overlay blocks a click; full-page ad detection; retries up to 3 times when the demo site shows its "under heavy load (queue full)" page; browser always closed in `finally` |
+| Error handling | Explicit waits with clear error messages; JavaScript click fallback when an ad overlay blocks a click; full-page ad detection; retries up to 3 times when the demo site shows its "under heavy load (queue full)" page; failure messages say when the site returned HTTP 403 (access denied) instead of the page; browser always closed in `finally` |
 | Reporting | Extent HTML report through a TestNG listener |
 | Parallel execution | `parallel="methods"` in `testng.xml` with a ThreadLocal driver per thread |
 

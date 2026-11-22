@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 public class CartAndCheckoutTests extends BaseTest {
 
-    @Test(description = "Adding more of a product already in the cart updates its cart quantity and line total")
+    @Test(groups = "regression", description = "Adding more of a product already in the cart updates its cart quantity and line total")
     public void modifyCartQuantity() {
         String productName = TestDataReader.get("product/name");
         int newQuantity = TestDataReader.getInt("product/updatedQuantity");
@@ -33,7 +33,7 @@ public class CartAndCheckoutTests extends BaseTest {
         attachScreenshot("Quantity updated in cart");
     }
 
-    @Test(description = "Removing a product from the cart removes only that product, also after page refresh")
+    @Test(groups = "regression", description = "Removing a product from the cart removes only that product, also after page refresh")
     public void removeProductFromCart() {
         String firstProduct = TestDataReader.get("product/name");
         String secondProduct = TestDataReader.get("secondProduct/name");
@@ -58,7 +58,7 @@ public class CartAndCheckoutTests extends BaseTest {
         attachScreenshot("Product removed from cart");
     }
 
-    @Test(description = "Removing the only product leaves an empty cart, also after page refresh")
+    @Test(groups = "regression", description = "Removing the only product leaves an empty cart, also after page refresh")
     public void removingLastProductEmptiesCart() {
         String productName = TestDataReader.get("product/name");
 
@@ -77,7 +77,7 @@ public class CartAndCheckoutTests extends BaseTest {
         attachScreenshot("Empty cart");
     }
 
-    @Test(description = "Products added as a guest stay in the cart after the user logs in")
+    @Test(groups = "regression", description = "Products added as a guest stay in the cart after the user logs in")
     public void cartPersistsAfterLogin() {
         String productName = TestDataReader.get("product/name");
         int quantity = TestDataReader.getInt("product/quantity");
@@ -100,7 +100,7 @@ public class CartAndCheckoutTests extends BaseTest {
         Assert.assertTrue(cartPage.deleteAccount(), "Test account should be deleted");
     }
 
-    @Test(description = "Browser Back from checkout returns to an unchanged cart, and Forward returns to the same order")
+    @Test(groups = "regression", description = "Browser Back from checkout returns to an unchanged cart, and Forward returns to the same order")
     public void backNavigationDuringCheckout() {
         String productName = TestDataReader.get("product/name");
         int quantity = TestDataReader.getInt("product/quantity");

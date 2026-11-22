@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class NegativeTests extends BaseTest {
 
-    @Test(description = "Sign-up with an email that is already registered is rejected")
+    @Test(groups = "regression", description = "Sign-up with an email that is already registered is rejected")
     public void signupWithExistingEmailIsRejected() {
         User user = signUpNewUser();
 
@@ -33,7 +33,7 @@ public class NegativeTests extends BaseTest {
         Assert.assertTrue(loginPage.login(user.email(), user.password()).deleteAccount(), "Test account should be deleted");
     }
 
-    @Test(description = "Login with invalid credentials shows an error and does not log in")
+    @Test(groups = {"smoke", "regression"}, description = "Login with invalid credentials shows an error and does not log in")
     public void loginWithInvalidCredentialsFails() {
         String email = TestDataReader.get("invalidLogin/email");
         String password = TestDataReader.get("invalidLogin/password");
@@ -47,7 +47,7 @@ public class NegativeTests extends BaseTest {
         attachScreenshot("Invalid login error");
     }
 
-    @Test(description = "Login with a registered email but a wrong password shows an error and does not log in")
+    @Test(groups = "regression", description = "Login with a registered email but a wrong password shows an error and does not log in")
     public void loginWithWrongPasswordFails() {
         User user = signUpNewUser();
         String wrongPassword = TestDataReader.get("invalidLogin/password");
@@ -64,7 +64,7 @@ public class NegativeTests extends BaseTest {
         Assert.assertTrue(loginPage.login(user.email(), user.password()).deleteAccount(), "Test account should be deleted");
     }
 
-    @Test(description = "Login with an empty email is blocked by the form's required-field validation")
+    @Test(groups = "regression", description = "Login with an empty email is blocked by the form's required-field validation")
     public void loginWithEmptyEmailIsBlocked() {
         step("Submit the login form with an empty email");
         LoginPage loginPage = new LoginPage().open().enterLoginDetails("", TestDataReader.get("invalidLogin/password"));
@@ -76,7 +76,7 @@ public class NegativeTests extends BaseTest {
         attachScreenshot("Empty email blocked");
     }
 
-    @Test(description = "Sign-up with a badly formatted email is blocked by the form's email validation")
+    @Test(groups = "regression", description = "Sign-up with a badly formatted email is blocked by the form's email validation")
     public void signupWithInvalidEmailFormatIsBlocked() {
         String badEmail = TestDataReader.get("invalidEmailFormat");
 
@@ -90,7 +90,7 @@ public class NegativeTests extends BaseTest {
         attachScreenshot("Invalid email format blocked");
     }
 
-    @Test(description = "Searching for a product that does not exist returns no results")
+    @Test(groups = "regression", description = "Searching for a product that does not exist returns no results")
     public void searchForNonExistingProductReturnsNothing() {
         String term = TestDataReader.get("invalidSearchTerm");
 
@@ -101,7 +101,7 @@ public class NegativeTests extends BaseTest {
         attachScreenshot("No search results");
     }
 
-    @Test(description = "Checkout without logging in is blocked and asks the user to register or log in")
+    @Test(groups = {"smoke", "regression"}, description = "Checkout without logging in is blocked and asks the user to register or log in")
     public void checkoutWithoutLoginIsBlocked() {
         String productName = TestDataReader.get("product/name");
 
@@ -119,7 +119,7 @@ public class NegativeTests extends BaseTest {
         attachScreenshot("Checkout blocked for guest");
     }
 
-    @Test(description = "Payment with the required card details left empty is blocked and no order is placed")
+    @Test(groups = "regression", description = "Payment with the required card details left empty is blocked and no order is placed")
     public void paymentWithoutCardDetailsIsBlocked() {
         String productName = TestDataReader.get("product/name");
         User user = signUpNewUser();

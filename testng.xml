@@ -5,6 +5,12 @@
         <listener class-name="com.automation.ecommerce.reports.TestListener"/>
     </listeners>
     <test name="E-commerce Tests">
+        <!-- All tests are in "regression"; run only the quick "smoke" set with: mvn clean test -Dgroups=smoke -->
+        <groups>
+            <run>
+                <include name="regression"/>
+            </run>
+        </groups>
         <classes>
             <class name="com.automation.ecommerce.tests.EndToEndFlowTest"/>
             <class name="com.automation.ecommerce.tests.NegativeTests"/>
