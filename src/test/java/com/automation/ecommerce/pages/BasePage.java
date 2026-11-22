@@ -23,6 +23,8 @@ import java.util.List;
 public abstract class BasePage {
 
     private static final int OVERLOAD_RETRIES = 3;
+    private static final String OVERLOADED = "under heavy load";     // the demo site's own overload page
+    private static final String ACCESS_DENIED = "HTTP ERROR 403";    // Chrome's page when the site refuses access
 
     protected final Logger log = LogManager.getLogger(getClass());
     protected final WebDriver driver;
@@ -98,6 +100,22 @@ public abstract class BasePage {
         }
     }
 
+    /** Waits for the element and returns true, or returns false if it does not appear in time. */
+    protected boolean isShownAfterWait(By locator) {
+        try {
+            waitForVisible(locator);
+            return true;
+        } catch (TimeoutException e) {
+            log.warn("Not shown: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /** The browser's built-in validation message for a form field (empty when the browser accepts the value). */
+    protected String getValidationMessage(By field) {
+        return waitForPresent(field).getDomProperty("validationMessage");
+    }
+
     /** Waits until the element exists in the page (it may be styled/hidden, e.g. dropdowns wrapped by a UI plugin). */
     protected WebElement waitForPresent(By locator) {
         try {
@@ -144,33 +162,20 @@ public abstract class BasePage {
      * form is never sent twice; if a form's result is lost, the test's own checks fail on the next step.
      */
     private void retryIfSiteOverloaded() {
-        for (int attempt = 1; isSiteOverloaded(); attempt++) {
-            if (attempt > OVERLOAD_RETRIES) {
-                throw new IllegalStateException("Site still overloaded after " + OVERLOAD_RETRIES + " retries on "
-                        + driver.getCurrentUrl() + " ('under heavy load (queue full)'): a site outage, not a product defect");
-            }
+        for (int attempt = 1; attempt <= OVERLOAD_RETRIES && isErrorPage(OVERLOADED); attempt++) {
             log.warn("Site overloaded ('queue full'), retry {} of {} in {} s", attempt, OVERLOAD_RETRIES, attempt * 5);
             try {
                 Thread.sleep(attempt * 5000L);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new IllegalStateException("Interrupted while waiting for the overloaded site", e);
+                return;
             }
             driver.get(driver.getCurrentUrl());
         }
     }
 
-    private boolean isSiteOverloaded() {
-        return isShortErrorPageWith("under heavy load");
-    }
-
-    /** Chrome's own error page when the site refuses the request ("Access to ... was denied", HTTP ERROR 403). */
-    private boolean isAccessDenied() {
-        return isShortErrorPageWith("HTTP ERROR 403");
-    }
-
     /** True when the page is a short error page (not a real site page) containing the given text. */
-    private boolean isShortErrorPageWith(String text) {
+    private boolean isErrorPage(String text) {
         try {
             Object found = ((JavascriptExecutor) driver).executeScript(
                     "var t = document.body ? document.body.textContent : '';"
@@ -182,13 +187,16 @@ public abstract class BasePage {
         }
     }
 
-    /** Current URL for error messages, noting when the site showed an overload or access-denied page instead. */
+    /** Current URL for error messages, noting when the site showed an error page instead of the real page. */
     private String describePage() {
         String url = driver.getCurrentUrl();
-        if (isAccessDenied()) {
+        if (isErrorPage(ACCESS_DENIED)) {
             return url + " (site returned HTTP 403 'Access denied': the site refused this machine, not a product defect)";
         }
-        return isSiteOverloaded() ? url + " (site showed 'under heavy load (queue full)', not the expected page)" : url;
+        if (isErrorPage(OVERLOADED)) {
+            return url + " (site showed 'under heavy load (queue full)', not the expected page)";
+        }
+        return url;
     }
 
     public String getCurrentUrl() {
@@ -242,11 +250,6 @@ public abstract class BasePage {
 
     public boolean deleteAccount() {
         click(deleteAccountLink);
-        try {
-            return waitForVisible(accountDeleted).isDisplayed();
-        } catch (TimeoutException e) {
-            log.warn("'Account Deleted!' message not shown: {}", e.getMessage());
-            return false;
-        }
+        return isShownAfterWait(accountDeleted);
     }
 }

@@ -37,21 +37,21 @@ public class CartPage extends BasePage {
     }
 
     public int getPrice(String name) {
-        return toAmount(getText(By.xpath(String.format(PRODUCT_ROW, name) + "//td[contains(@class,'cart_price')]/p")));
+        return toAmount(getText(inRow(name, "//td[contains(@class,'cart_price')]/p")));
     }
 
     public int getQuantity(String name) {
-        return Integer.parseInt(getText(By.xpath(String.format(PRODUCT_ROW, name) + "//td[contains(@class,'cart_quantity')]/button")));
+        return Integer.parseInt(getText(inRow(name, "//td[contains(@class,'cart_quantity')]/button")));
     }
 
     public int getTotal(String name) {
-        return toAmount(getText(By.xpath(String.format(PRODUCT_ROW, name) + "//td[contains(@class,'cart_total')]/p")));
+        return toAmount(getText(inRow(name, "//td[contains(@class,'cart_total')]/p")));
     }
 
     public CartPage removeProduct(String name) {
         log.info("Removing '{}' from cart", name);
         WebElement row = waitForVisible(productRow(name));
-        click(By.xpath(String.format(PRODUCT_ROW, name) + "//a[contains(@class,'cart_quantity_delete')]"));
+        click(inRow(name, "//a[contains(@class,'cart_quantity_delete')]"));
         wait.until(ExpectedConditions.invisibilityOf(row));
         return this;
     }
@@ -78,5 +78,10 @@ public class CartPage extends BasePage {
 
     private By productRow(String name) {
         return By.xpath(String.format(PRODUCT_ROW, name));
+    }
+
+    /** An element inside the given product's row, e.g. its price cell. */
+    private By inRow(String name, String xpathInsideRow) {
+        return By.xpath(String.format(PRODUCT_ROW, name) + xpathInsideRow);
     }
 }

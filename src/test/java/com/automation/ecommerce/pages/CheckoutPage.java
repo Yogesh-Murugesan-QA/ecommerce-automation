@@ -6,7 +6,6 @@ import org.openqa.selenium.By;
 public class CheckoutPage extends BasePage {
 
     private final By deliveryAddress = By.id("address_delivery");
-    private final By billingAddress = By.id("address_invoice");
     private final By totalAmount = By.xpath("//b[normalize-space()='Total Amount']/ancestor::tr//p[contains(@class,'cart_total_price')]");
     private final By placeOrderButton = By.cssSelector("a[href='/payment']");
     private static final String PRODUCT_ROW =
@@ -18,10 +17,6 @@ public class CheckoutPage extends BasePage {
 
     public String getDeliveryAddress() {
         return getText(deliveryAddress);
-    }
-
-    public String getBillingAddress() {
-        return getText(billingAddress);
     }
 
     public boolean isProductListed(String name) {

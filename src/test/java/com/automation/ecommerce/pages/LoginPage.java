@@ -1,7 +1,6 @@
 package com.automation.ecommerce.pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 
 /** The "Signup / Login" page: new-user sign-up form and existing-user login form. */
 public class LoginPage extends BasePage {
@@ -64,20 +63,16 @@ public class LoginPage extends BasePage {
 
     /** Browser's built-in validation message for the login email field (empty when the value is valid). */
     public String getLoginEmailValidationMessage() {
-        return waitForPresent(loginEmail).getDomProperty("validationMessage");
+        return getValidationMessage(loginEmail);
     }
 
     /** Browser's built-in validation message for the sign-up email field (empty when the value is valid). */
     public String getSignupEmailValidationMessage() {
-        return waitForPresent(signupEmail).getDomProperty("validationMessage");
+        return getValidationMessage(signupEmail);
     }
 
     /** Waits for the login form, so it is safe to call right after a click such as Logout. */
     public boolean isLoginFormDisplayed() {
-        try {
-            return waitForVisible(loginEmail).isDisplayed();
-        } catch (TimeoutException e) {
-            return false;
-        }
+        return isShownAfterWait(loginEmail);
     }
 }

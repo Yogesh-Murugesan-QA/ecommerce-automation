@@ -1,7 +1,6 @@
 package com.automation.ecommerce.pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.util.List;
 

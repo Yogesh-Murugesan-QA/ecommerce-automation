@@ -24,11 +24,11 @@ public class PaymentPage extends BasePage {
     /** Browser validation message of each card field, by field name. An empty message means the browser would accept the field as it is. */
     public Map<String, String> getCardFieldValidationMessages() {
         Map<String, String> messages = new LinkedHashMap<>();
-        messages.put("Name on Card", waitForPresent(nameOnCard).getDomProperty("validationMessage"));
-        messages.put("Card Number", waitForPresent(cardNumber).getDomProperty("validationMessage"));
-        messages.put("CVC", waitForPresent(cvc).getDomProperty("validationMessage"));
-        messages.put("Expiry Month", waitForPresent(expiryMonth).getDomProperty("validationMessage"));
-        messages.put("Expiry Year", waitForPresent(expiryYear).getDomProperty("validationMessage"));
+        messages.put("Name on Card", getValidationMessage(nameOnCard));
+        messages.put("Card Number", getValidationMessage(cardNumber));
+        messages.put("CVC", getValidationMessage(cvc));
+        messages.put("Expiry Month", getValidationMessage(expiryMonth));
+        messages.put("Expiry Year", getValidationMessage(expiryYear));
         return messages;
     }
 

@@ -44,7 +44,6 @@ public class ProductDetailsPage extends BasePage {
     }
 
     public String getAddedToCartMessage() {
-        waitForVisible(addedMessage);
         return getText(addedMessage);
     }
 

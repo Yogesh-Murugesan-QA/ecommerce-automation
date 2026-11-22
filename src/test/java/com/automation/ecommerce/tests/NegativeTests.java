@@ -130,8 +130,11 @@ public class NegativeTests extends BaseTest {
 
         step("Check every card field is required before submitting (never submit if any field is not)");
         Map<String, String> validation = paymentPage.getCardFieldValidationMessages();
-        validation.forEach((field, message) -> Assert.assertTrue(message != null && !message.isEmpty(),
-                "Card field '" + field + "' should be required so the browser blocks an empty submit"));
+        for (Map.Entry<String, String> field : validation.entrySet()) {
+            String message = field.getValue();
+            Assert.assertTrue(message != null && !message.isEmpty(),
+                    "Card field '" + field.getKey() + "' should be required so the browser blocks an empty submit");
+        }
 
         step("Submit the payment form with no card details");
         paymentPage.submitEmptyForm();

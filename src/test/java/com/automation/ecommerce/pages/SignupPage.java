@@ -2,7 +2,6 @@ package com.automation.ecommerce.pages;
 
 import com.automation.ecommerce.utils.User;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 
 /** "Enter Account Information" page shown after the first sign-up step. */
 public class SignupPage extends BasePage {
@@ -61,12 +60,7 @@ public class SignupPage extends BasePage {
     }
 
     public boolean isAccountCreated() {
-        try {
-            return waitForVisible(accountCreated).isDisplayed();
-        } catch (TimeoutException e) {
-            log.warn("'Account Created!' message not shown: {}", e.getMessage());
-            return false;
-        }
+        return isShownAfterWait(accountCreated);
     }
 
     public HomePage continueToHome() {
