@@ -102,6 +102,15 @@ public abstract class BasePage {
         }
     }
 
+    /**
+     * Pages load with the EAGER strategy (we don't wait for ads), so a page's own scripts may still be
+     * setting up buttons. Call this before clicking a button that relies on those scripts.
+     */
+    protected void waitForPageScriptsLoaded() {
+        new WebDriverWait(driver, Duration.ofSeconds(ConfigReader.getInt("page.load.seconds")))
+                .until(d -> "complete".equals(((JavascriptExecutor) d).executeScript("return document.readyState")));
+    }
+
     protected void selectByValue(By locator, String value) {
         new Select(waitForPresent(locator)).selectByValue(value);
     }

@@ -35,6 +35,8 @@ public class ProductDetailsPage extends BasePage {
 
     public ProductDetailsPage addToCart() {
         log.info("Adding product to cart");
+        // A click before the page's script has set up the button can do nothing, so wait for the page to finish loading
+        waitForPageScriptsLoaded();
         click(addToCartButton);
         // Popup uses class "modal fade" and is hidden until the click; wait for it
         waitForVisible(cartPopup);
